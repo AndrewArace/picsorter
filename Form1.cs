@@ -120,9 +120,13 @@ namespace picsorter {
             }
             else {
                 Log("Scanning source directory...");
-                var allFiles = Directory.EnumerateFiles(txtSourceDirectory.Text, sbTypes.ToString(), option);
+                var allFiles = Directory.EnumerateFiles(txtSourceDirectory.Text, sbTypes.ToString(), option).ToList();
                 int totalFiles = allFiles.Count();
                 int counter = 0;
+                int counterCreated = 0;
+                int counterCopied = 0;
+                int counterDeleted = 0;
+                int counterWarnings = 0;
                 Log(string.Format("Found {0} source files.", totalFiles));
 
 
@@ -132,23 +136,32 @@ namespace picsorter {
 
                     FileInfo fi = new FileInfo(fileName);
 
-                    string year = fi.CreationTime.Year.ToString();
-                    string month = fi.CreationTime.Month.ToString().PadLeft(2, '0');
-                    string date = fi.CreationTime.Day.ToString().PadLeft(2, '0');
+                    DateTime modTime = fi.LastWriteTime;
+
+                    string year = modTime.Year.ToString();
+                    string month = modTime.Month.ToString().PadLeft(2, '0');
+                    string date = modTime.Day.ToString().PadLeft(2, '0');
 
                     string subPath = string.Format("{0}{1}\\{0}-{1}-{2}", year, month, date);
                     string destination = System.IO.Path.Combine(txtDestinationDirectory.Text, subPath);
 
                     if(!Directory.Exists(destination)) {
                         Directory.CreateDirectory(destination);
+                        counterCreated++;
                     }
 
                     string fileDestination = System.IO.Path.Combine(destination, fi.Name);
                     if (!File.Exists(fileDestination)) {
                         fi.CopyTo(fileDestination);
+                        counterCopied++;
+                        if (chkDeleteAfterMoving.Checked) {
+                            fi.Delete();
+                            counterDeleted++;
+                        }
                     }
                     else {
                         Log("Warning: When copying " + fileName + ", " + fileDestination + " already exists.");
+                        counterWarnings++;
                     }
 
                     if (bw.CancellationPending) {
@@ -156,6 +169,12 @@ namespace picsorter {
                         return;
                     }
                 }
+
+                Log(string.Format("Processed: {0}", counter));
+                Log(string.Format("Directories Created: {0}", counterCreated));
+                Log(string.Format("Copied: {0}", counterCopied));
+                Log(string.Format("Deleted: {0}", counterDeleted));
+                Log(string.Format("Warnings: {0}", counterWarnings));
             }
 
             Log("Completed.");
@@ -194,6 +213,10 @@ namespace picsorter {
             }
             if (string.IsNullOrWhiteSpace(txtDestinationDirectory.Text) || !Directory.Exists(txtDestinationDirectory.Text)) {
                 errorMessage = "Destination directory not found.";
+                return false;
+            }
+            if (txtDestinationDirectory.Text.Equals(txtSourceDirectory.Text, StringComparison.CurrentCultureIgnoreCase)) {
+                errorMessage = "Source and Destination cannot be the same";
                 return false;
             }
             return true;
