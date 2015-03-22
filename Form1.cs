@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace picsorter {
@@ -98,6 +99,15 @@ namespace picsorter {
             }
         }
 
+        public static IEnumerable<string> GetFiles(string path,
+                       string searchPatternExpression = "",
+                       SearchOption searchOption = SearchOption.TopDirectoryOnly) {
+            Regex reSearchPattern = new Regex(searchPatternExpression);
+            return Directory.EnumerateFiles(path, "*", searchOption)
+                            .Where(file =>
+                                     reSearchPattern.IsMatch(Path.GetExtension(file).ToLower()));
+        }
+
 
         void bw_DoWork(object sender, DoWorkEventArgs e) {
             SearchOption option;
@@ -109,10 +119,17 @@ namespace picsorter {
             }
 
             StringBuilder sbTypes = new StringBuilder();
+            //JPG
             if (chkFileTypeJpg.Checked) {
                 if (sbTypes.Length > 0)
-                    sbTypes.Append(";");
-                sbTypes.Append("*.jpg");
+                    sbTypes.Append("|");
+                sbTypes.Append(@"\.jpg");
+            }
+            //MP4
+            if (chkFileTypeMP4.Checked) {
+                if (sbTypes.Length > 0)
+                    sbTypes.Append("|");
+                sbTypes.Append(@"\.mp4");
             }
 
             if (sbTypes.Length == 0) {
@@ -120,7 +137,8 @@ namespace picsorter {
             }
             else {
                 Log("Scanning source directory...");
-                var allFiles = Directory.EnumerateFiles(txtSourceDirectory.Text, sbTypes.ToString(), option).ToList();
+                //var allFiles = Directory.EnumerateFiles(txtSourceDirectory.Text, sbTypes.ToString(), option).ToList();
+                var allFiles = GetFiles(txtSourceDirectory.Text, sbTypes.ToString(), option).ToList();
                 int totalFiles = allFiles.Count();
                 int counter = 0;
                 int counterCreated = 0;
@@ -152,6 +170,7 @@ namespace picsorter {
 
                     string fileDestination = System.IO.Path.Combine(destination, fi.Name);
                     if (!File.Exists(fileDestination)) {
+                        Status(string.Format("Copying {0} to {1}", fileName, subPath));
                         fi.CopyTo(fileDestination);
                         counterCopied++;
                         if (chkDeleteAfterMoving.Checked) {
@@ -166,6 +185,7 @@ namespace picsorter {
 
                     if (bw.CancellationPending) {
                         Log("Cancelled.");
+                        Status("Cancelled.");
                         return;
                     }
                 }
@@ -178,6 +198,7 @@ namespace picsorter {
             }
 
             Log("Completed.");
+            Status("Completed.");
         }
 
         #endregion
@@ -257,6 +278,18 @@ namespace picsorter {
                     txtLog.SelectionStart = txtLog.Text.Length;
                     txtLog.ScrollToCaret();
                 }
+            }
+        }
+
+
+        private void Status(string p) {
+            if (InvokeRequired) {
+                Invoke((MethodInvoker)delegate {
+                    Status(p);
+                });
+            }
+            else {
+                lblStatus.Text = p;
             }
         }
 

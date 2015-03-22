@@ -29,6 +29,7 @@
             this.btnBrowseSource = new System.Windows.Forms.Button();
             this.txtSourceDirectory = new System.Windows.Forms.TextBox();
             this.grpOptions = new System.Windows.Forms.GroupBox();
+            this.chkFileTypeMP4 = new System.Windows.Forms.CheckBox();
             this.chkFileTypeJpg = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -40,6 +41,7 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.lblStatus = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             label3 = new System.Windows.Forms.Label();
@@ -97,6 +99,7 @@
             // 
             this.grpOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpOptions.Controls.Add(this.chkFileTypeMP4);
             this.grpOptions.Controls.Add(this.chkFileTypeJpg);
             this.grpOptions.Controls.Add(this.label4);
             this.grpOptions.Controls.Add(this.btnCancel);
@@ -109,6 +112,19 @@
             this.grpOptions.TabIndex = 4;
             this.grpOptions.TabStop = false;
             this.grpOptions.Text = "Options";
+            // 
+            // chkFileTypeMP4
+            // 
+            this.chkFileTypeMP4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkFileTypeMP4.AutoSize = true;
+            this.chkFileTypeMP4.Checked = true;
+            this.chkFileTypeMP4.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkFileTypeMP4.Location = new System.Drawing.Point(522, 60);
+            this.chkFileTypeMP4.Name = "chkFileTypeMP4";
+            this.chkFileTypeMP4.Size = new System.Drawing.Size(48, 17);
+            this.chkFileTypeMP4.TabIndex = 5;
+            this.chkFileTypeMP4.Text = "MP4";
+            this.chkFileTypeMP4.UseVisualStyleBackColor = true;
             // 
             // chkFileTypeJpg
             // 
@@ -220,14 +236,25 @@
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtLog.Size = new System.Drawing.Size(574, 87);
+            this.txtLog.Size = new System.Drawing.Size(574, 67);
             this.txtLog.TabIndex = 5;
             this.txtLog.TabStop = false;
+            // 
+            // lblStatus
+            // 
+            this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblStatus.AutoEllipsis = true;
+            this.lblStatus.Location = new System.Drawing.Point(12, 289);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(574, 16);
+            this.lblStatus.TabIndex = 8;
             // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(598, 343);
+            this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.txtLog);
             this.Controls.Add(label3);
             this.Controls.Add(this.progressBar1);
@@ -266,6 +293,8 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.CheckBox chkFileTypeJpg;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox chkFileTypeMP4;
+        private System.Windows.Forms.Label lblStatus;
     }
 }
 
